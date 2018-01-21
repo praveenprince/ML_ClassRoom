@@ -1,4 +1,4 @@
-# MAchine Learning ClassRoom Training
+# Machine Learning ClassRoom Training
 All the sample projects created and executed as part of classroom training
 
 # Week 1
