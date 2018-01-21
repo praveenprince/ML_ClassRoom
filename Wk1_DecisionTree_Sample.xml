@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<process version="5.3.015">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="5.3.015" expanded="true" name="Process">
+    <description>- Sonar data is used
+-Split the dta using 'Split Validation' 70-30 
+-use 70% to develop - Decision Tree </description>
+    <process expanded="true">
+      <operator activated="true" class="retrieve" compatibility="5.3.015" expanded="true" height="60" name="Retrieve Sonar" width="90" x="112" y="165">
+        <parameter key="repository_entry" value="//Samples/data/Sonar"/>
+      </operator>
+      <operator activated="true" class="split_validation" compatibility="5.3.015" expanded="true" height="112" name="Validation" width="90" x="246" y="165">
+        <process expanded="true">
+          <operator activated="true" class="decision_tree" compatibility="5.3.015" expanded="true" height="76" name="Decision Tree" width="90" x="45" y="75"/>
+          <connect from_port="training" to_op="Decision Tree" to_port="training set"/>
+          <connect from_op="Decision Tree" from_port="model" to_port="model"/>
+          <portSpacing port="source_training" spacing="0"/>
+          <portSpacing port="sink_model" spacing="0"/>
+          <portSpacing port="sink_through 1" spacing="0"/>
+        </process>
+        <process expanded="true">
+          <operator activated="true" class="apply_model" compatibility="5.3.015" expanded="true" height="76" name="Apply Model" width="90" x="45" y="75">
+            <list key="application_parameters"/>
+          </operator>
+          <operator activated="true" class="performance_classification" compatibility="5.3.015" expanded="true" height="76" name="Performance" width="90" x="246" y="75">
+            <parameter key="root_mean_squared_error" value="true"/>
+            <list key="class_weights"/>
+          </operator>
+          <connect from_port="model" to_op="Apply Model" to_port="model"/>
+          <connect from_port="test set" to_op="Apply Model" to_port="unlabelled data"/>
+          <connect from_op="Apply Model" from_port="labelled data" to_op="Performance" to_port="labelled data"/>
+          <connect from_op="Performance" from_port="performance" to_port="averagable 1"/>
+          <portSpacing port="source_model" spacing="0"/>
+          <portSpacing port="source_test set" spacing="0"/>
+          <portSpacing port="source_through 1" spacing="0"/>
+          <portSpacing port="sink_averagable 1" spacing="0"/>
+          <portSpacing port="sink_averagable 2" spacing="0"/>
+        </process>
+      </operator>
+      <connect from_op="Retrieve Sonar" from_port="output" to_op="Validation" to_port="training"/>
+      <connect from_op="Validation" from_port="model" to_port="result 1"/>
+      <connect from_op="Validation" from_port="averagable 1" to_port="result 2"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+      <portSpacing port="sink_result 3" spacing="0"/>
+    </process>
+  </operator>
+</process>
